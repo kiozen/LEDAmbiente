@@ -19,6 +19,10 @@ Page {
                 width: parent.width
                 height: idGrid.height
 
+                onClicked: {
+                    deviceManager.connectToDevice(deviceAddr)
+                }
+
                 Grid {
                     id: idGrid
                     columns: 2
@@ -52,5 +56,14 @@ Page {
                 }
             }
         }
+    }
+
+    Label {
+        anchors.fill: parent
+        visible: idListDevice.count == 0
+        text: qsTr("<p>No devices found. Make sure the controller is switched on, connected to the Wifi and is running LEDControl.</p>")
+        wrapMode: Text.Wrap
+        verticalAlignment: "AlignVCenter"
+        horizontalAlignment: "AlignHCenter"
     }
 }

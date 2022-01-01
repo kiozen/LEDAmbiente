@@ -6,7 +6,7 @@ ApplicationWindow {
     width: 640
     height: 480
     visible: true
-    title: qsTr("Stack")
+    title: qsTr("LED Ambiente")
 
     header: ToolBar {
         contentHeight: toolButton.implicitHeight
@@ -18,6 +18,7 @@ ApplicationWindow {
             onClicked: {
                 if (stackView.depth > 1) {
                     stackView.pop()
+                    deviceManager.disconnectFromDevice()
                 } else {
                     drawer.open()
                 }
@@ -39,14 +40,6 @@ ApplicationWindow {
             anchors.fill: parent
 
             ItemDelegate {
-                text: qsTr("Page 1")
-                width: parent.width
-                onClicked: {
-                    stackView.push("Page1Form.qml")
-                    drawer.close()
-                }
-            }
-            ItemDelegate {
                 text: qsTr("Page 2")
                 width: parent.width
                 onClicked: {
@@ -61,5 +54,18 @@ ApplicationWindow {
         id: stackView
         initialItem: "DeviceList.qml"
         anchors.fill: parent
+
+        Connections {
+            target: deviceManager
+            function onConnectedChanged() {
+                if (deviceManager.connected) {
+                    stackView.push("Device.qml")
+                } else {
+                    if (stackView.depth > 1) {
+                        stackView.pop()
+                    }
+                }
+            }
+        }
     }
 }

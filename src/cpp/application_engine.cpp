@@ -1,4 +1,5 @@
 #include "application_engine.hpp"
+#include "device_manager.hpp"
 #include "model_devices.hpp"
 
 #include <QQmlContext>
@@ -9,7 +10,9 @@ ApplicationEngine::ApplicationEngine()
 
     QQmlContext* context = rootContext();
 
-    devices_ = new ModelDevice(this);
+    model_devices_ = new ModelDevice(this);
+    device_manager_ = new DeviceManager(this);
 
-    context->setContextProperty("modelDevices", devices_);
+    context->setContextProperty("modelDevices", model_devices_);
+    context->setContextProperty("deviceManager", device_manager_);
 }

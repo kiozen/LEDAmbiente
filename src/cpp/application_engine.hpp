@@ -10,7 +10,8 @@ public:
     virtual ~ApplicationEngine() = default;
 
 private:
-    class ModelDevice* devices_;
+    class ModelDevice* model_devices_;
+    class DeviceManager* device_manager_;
 };
 
 #endif // SRC_CPP_APPLICATION_ENGINE_HPP
