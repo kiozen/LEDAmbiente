@@ -20,7 +20,7 @@ Page {
                 height: idGrid.height
 
                 onClicked: {
-                    deviceManager.connectToDevice(deviceAddr)
+                    deviceManager.connectToDevice(deviceAddr, deviceName)
                 }
 
                 Grid {

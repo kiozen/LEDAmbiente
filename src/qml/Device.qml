@@ -1,14 +1,17 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.5
 import QtQuick.Dialogs 1.3
+import Widgets 1.0
 
 Page {
+    title: deviceManager.name
 
-    //    width: 600
-    //    height: 400
-    title: qsTr("Page 1")
+    ColorPicker {
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
 
-    ColorDialog {
-        Component.onCompleted: visible = true
+        colorIn: deviceManager.color
+        onColorChanged: deviceManager.color = color
     }
 }

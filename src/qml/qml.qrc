@@ -5,5 +5,10 @@
         <file>Device.qml</file>
         <file>Page2Form.qml</file>
         <file>qtquickcontrols2.conf</file>
+        <file>Widgets/HueSlider.qml</file>
+        <file>Widgets/SaturationSlider.qml</file>
+        <file>Widgets/BrightnessSlider.qml</file>
+        <file>Widgets/ColorPicker.qml</file>
+        <file>Widgets/qmldir</file>
     </qresource>
 </RCC>

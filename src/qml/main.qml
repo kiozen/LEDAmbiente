@@ -17,10 +17,9 @@ ApplicationWindow {
             font.pixelSize: Qt.application.font.pixelSize * 1.6
             onClicked: {
                 if (stackView.depth > 1) {
-                    stackView.pop()
                     deviceManager.disconnectFromDevice()
                 } else {
-                    drawer.open()
+
                 }
             }
         }
@@ -28,25 +27,6 @@ ApplicationWindow {
         Label {
             text: stackView.currentItem.title
             anchors.centerIn: parent
-        }
-    }
-
-    Drawer {
-        id: drawer
-        width: window.width * 0.66
-        height: window.height
-
-        Column {
-            anchors.fill: parent
-
-            ItemDelegate {
-                text: qsTr("Page 2")
-                width: parent.width
-                onClicked: {
-                    stackView.push("Page2Form.qml")
-                    drawer.close()
-                }
-            }
         }
     }
 

@@ -77,7 +77,6 @@ QVariant ModelDevice::data(const QModelIndex& index, int role) const
 void ModelDevice::SlotUpdate()
 {
     QMutexLocker lock(&mutex_);
-    beginResetModel();
     QMap<QString, device_info_t> updated_devices;
     for(const QString& key : devices_.keys())
     {
@@ -87,8 +86,12 @@ void ModelDevice::SlotUpdate()
             updated_devices[key] = info;
         }
     }
-    devices_.swap(updated_devices);
-    endResetModel();
+    if(updated_devices.keys() != devices_.keys())
+    {
+        beginResetModel();
+        devices_.swap(updated_devices);
+        endResetModel();
+    }
 
     QJsonObject msg = {
         {"cmd", "identify"}
@@ -124,11 +127,15 @@ void ModelDevice::SlotReceive()
         QHostInfo::lookupHost(info.addr.toString(), [this, mac](const QHostInfo& info){
             if(devices_.contains(mac))
             {
+                beginResetModel();
                 devices_[mac].host_info = info;
+                endResetModel();
             }
         });
 
+        beginResetModel();
         devices_[mac] = info;
+        endResetModel();
     }
     else
     {
