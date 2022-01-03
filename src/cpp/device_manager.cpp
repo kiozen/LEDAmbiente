@@ -66,6 +66,9 @@ void DeviceManager::slotReadyRead()
         quint8 blue = msg["blue"].toInt();
         color_ = QColor(red, green, blue);
         emit colorChanged();
+
+        power_ = msg["power"].toBool();
+        emit powerChanged();
     }
     else if(msg["rsp"] == "get_name")
     {
@@ -100,6 +103,16 @@ void DeviceManager::setColor(const QColor& color)
     msg["red"] = color_.red();
     msg["green"] = color_.green();
 
+    sendJson(msg);
+}
+
+void DeviceManager::setPower(bool on)
+{
+    power_ = on;
+    QJsonObject msg = {
+        {"cmd", "set_power"},
+    };
+    msg["power"] = power_;
     sendJson(msg);
 }
 

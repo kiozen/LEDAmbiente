@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import Widgets 1.0
 import QtQuick.Controls 2.5
+import QtQuick.Layouts 1.12
 
 Item {
     id: root
@@ -13,73 +14,50 @@ Item {
         idBrightnessSlider.value = colorIn.hsvValue
     }
 
-    HueSlider {
-        id: idHueSlider
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.leftMargin: 10
-        anchors.rightMargin: 10
-        anchors.topMargin: 10
+    ColumnLayout {
+        anchors.fill: parent
 
-        height: 60
+        HueSlider {
+            id: idHueSlider
+            Layout.fillWidth: true
+            height: 60
 
-        onValueChanged: {
-            root.color = Qt.hsva(value, idSaturationSlider.value,
-                                 idBrightnessSlider.value, 1)
+            onValueChanged: {
+                root.color = Qt.hsva(value, idSaturationSlider.value,
+                                     idBrightnessSlider.value, 1)
+            }
         }
-    }
 
-    SaturationSlider {
-        id: idSaturationSlider
+        SaturationSlider {
+            id: idSaturationSlider
+            Layout.fillWidth: true
+            hue: idHueSlider.value
+            height: 60
 
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: idHueSlider.bottom
-        anchors.leftMargin: 10
-        anchors.rightMargin: 10
-        anchors.topMargin: 10
-
-        hue: idHueSlider.value
-
-        height: 60
-
-        onValueChanged: {
-            root.color = Qt.hsva(idHueSlider.value, value,
-                                 idBrightnessSlider.value, 1)
+            onValueChanged: {
+                root.color = Qt.hsva(idHueSlider.value, value,
+                                     idBrightnessSlider.value, 1)
+            }
         }
-    }
 
-    BrightnessSlider {
-        id: idBrightnessSlider
+        BrightnessSlider {
+            id: idBrightnessSlider
+            Layout.fillWidth: true
+            hue: idHueSlider.value
+            height: 60
 
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: idSaturationSlider.bottom
-        anchors.leftMargin: 10
-        anchors.rightMargin: 10
-        anchors.topMargin: 10
-
-        hue: idHueSlider.value
-
-        height: 60
-
-        onValueChanged: {
-            root.color = Qt.hsva(idHueSlider.value,
-                                 idSaturationSlider.value, value, 1)
+            onValueChanged: {
+                root.color = Qt.hsva(idHueSlider.value,
+                                     idSaturationSlider.value, value, 1)
+            }
         }
-    }
 
-    Label {
-
-        anchors.top: idBrightnessSlider.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-
-        anchors.leftMargin: 10
-        anchors.rightMargin: 10
-        text: "color: " + root.color + " saturation: " + Math.round(
-                  root.color.hsvSaturation * 255) + "  brightness: " + Math.round(
-                  root.color.hsvValue * 255)
+        Label {
+            Layout.fillWidth: true
+            text: "color: " + root.color + " saturation: " + Math.round(
+                      root.color.hsvSaturation * 255) + "  brightness: " + Math.round(
+                      root.color.hsvValue * 255)
+            height: 20
+        }
     }
 }

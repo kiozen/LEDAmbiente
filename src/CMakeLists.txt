@@ -40,6 +40,7 @@ set (HDR
 set( RCS
     #resources.qrc
     qml/qml.qrc
+    resources.qrc
 )
 
 set(PROJECT_SOURCES

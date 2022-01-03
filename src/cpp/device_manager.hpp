@@ -12,6 +12,7 @@ class DeviceManager : public QObject
     Q_PROPERTY(bool connected READ connected NOTIFY connectedChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
+    Q_PROPERTY(bool power READ power WRITE setPower NOTIFY powerChanged)
 public:
     DeviceManager(QObject* parent);
     virtual ~DeviceManager() = default;
@@ -26,10 +27,14 @@ public:
 
     QString name() const {return name_;}
 
+    bool power() const {return power_;}
+    void setPower(bool on);
+
 signals:
     void connectedChanged();
     void colorChanged();
     void nameChanged();
+    void powerChanged();
 
 private slots:
     void slotConnected();
@@ -47,6 +52,7 @@ private:
     bool connected_;
     QColor color_;
     QString name_;
+    bool power_;
 };
 
 #endif // SRC_CPP_DEVICE_MANAGER_HPP
