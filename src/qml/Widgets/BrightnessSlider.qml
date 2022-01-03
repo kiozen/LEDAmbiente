@@ -4,7 +4,6 @@ Item {
     id: root
     property real value: 1.0
     property real hue: 0
-    height: 30
 
     Rectangle {
         id: idColorBar

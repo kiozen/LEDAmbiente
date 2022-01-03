@@ -3,12 +3,15 @@
         <file>main.qml</file>
         <file>DeviceList.qml</file>
         <file>Device.qml</file>
-        <file>Page2Form.qml</file>
+        <file>PageDeviceLight.qml</file>
+        <file>PageDeviceAlarm.qml</file>
+        <file>PageDeviceAnimation.qml</file>
         <file>qtquickcontrols2.conf</file>
         <file>Widgets/HueSlider.qml</file>
         <file>Widgets/SaturationSlider.qml</file>
         <file>Widgets/BrightnessSlider.qml</file>
         <file>Widgets/ColorPicker.qml</file>
+        <file>Widgets/TimePicker.qml</file>
         <file>Widgets/qmldir</file>
     </qresource>
 </RCC>

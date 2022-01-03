@@ -3,7 +3,6 @@ import QtQuick 2.12
 Item {
     id: root
     property real value: 0
-    height: 30
 
     Rectangle {
         id: idColorBar

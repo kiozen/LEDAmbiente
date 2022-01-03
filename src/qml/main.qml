@@ -4,7 +4,7 @@ import QtQuick.Controls 2.5
 ApplicationWindow {
     id: window
     width: 640
-    height: 480
+    height: 600
     visible: true
     title: qsTr("LED Ambiente")
 
