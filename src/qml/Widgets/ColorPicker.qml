@@ -5,13 +5,18 @@ import QtQuick.Layouts 1.12
 
 Item {
     id: root
-    property color color: "black"
-    property color colorIn: "black"
+    property color color: "transparent"
+    property color colorIn: "transparent"
 
     onColorInChanged: {
         idHueSlider.value = colorIn.hsvHue
         idSaturationSlider.value = colorIn.hsvSaturation
         idBrightnessSlider.value = colorIn.hsvValue
+
+        color = Qt.binding(function () {
+            return Qt.hsva(idHueSlider.value, idSaturationSlider.value,
+                           idBrightnessSlider.value, 1)
+        })
     }
 
     ColumnLayout {
@@ -21,11 +26,6 @@ Item {
             id: idHueSlider
             Layout.fillWidth: true
             height: 60
-
-            onValueChanged: {
-                root.color = Qt.hsva(value, idSaturationSlider.value,
-                                     idBrightnessSlider.value, 1)
-            }
         }
 
         SaturationSlider {
@@ -33,11 +33,6 @@ Item {
             Layout.fillWidth: true
             hue: idHueSlider.value
             height: 60
-
-            onValueChanged: {
-                root.color = Qt.hsva(idHueSlider.value, value,
-                                     idBrightnessSlider.value, 1)
-            }
         }
 
         BrightnessSlider {
@@ -45,11 +40,6 @@ Item {
             Layout.fillWidth: true
             hue: idHueSlider.value
             height: 60
-
-            onValueChanged: {
-                root.color = Qt.hsva(idHueSlider.value,
-                                     idSaturationSlider.value, value, 1)
-            }
         }
 
         Label {
