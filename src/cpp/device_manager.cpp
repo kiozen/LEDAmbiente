@@ -1,6 +1,7 @@
 #include "device_manager.hpp"
 
 #include <QDebug>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMessageBox>
@@ -37,13 +38,14 @@ Q_INVOKABLE void DeviceManager::disconnectFromDevice()
 void DeviceManager::slotConnected()
 {
     requestColor();
+    requestAlarm();
     connected_ = true;
     emit connectedChanged();
 }
 
 void DeviceManager::slotDisconnected()
 {
-    color_ = QColor();
+    light_.color = QColor();
     connected_ = false;
     emit connectedChanged();
 }
@@ -55,25 +57,51 @@ void DeviceManager::slotError(const QAbstractSocket::SocketError& socketError)
 
 void DeviceManager::slotReadyRead()
 {
-    const QByteArray& data = socket_->readLine();
-    const QJsonObject& msg = QJsonDocument::fromJson(data).object();
-    qDebug() << "recv:" << msg;
-
-    if(msg["rsp"] == "get_color")
+    while(socket_->bytesAvailable())
     {
-        quint8 red = msg["red"].toInt();
-        quint8 green = msg["green"].toInt();
-        quint8 blue = msg["blue"].toInt();
-        color_ = QColor(red, green, blue);
-        emit colorChanged();
+        const QByteArray& data = socket_->readLine();
+        const QJsonObject& msg = QJsonDocument::fromJson(data).object();
+        qDebug() << "recv:" << msg;
 
-        power_ = msg["power"].toBool();
-        emit powerChanged();
-    }
-    else if(msg["rsp"] == "get_name")
-    {
-        name_ = msg["name"].toString();
-        emit nameChanged();
+        if(msg["rsp"] == "get_color")
+        {
+            quint8 red = msg["red"].toInt();
+            quint8 green = msg["green"].toInt();
+            quint8 blue = msg["blue"].toInt();
+            light_.color = QColor(red, green, blue);
+            emit colorChanged();
+
+            light_.power = msg["power"].toBool();
+            emit powerChanged();
+        }
+        else if(msg["rsp"] == "get_name")
+        {
+            name_ = msg["name"].toString();
+            emit nameChanged();
+        }
+        else if(msg["rsp"] == "get_alarm")
+        {
+            alarm_.name = msg["name"].toString();
+            alarm_.active = msg["active"].toBool();
+            alarm_.hour = msg["hour"].toInt();
+            alarm_.minute = msg["minute"].toInt();
+
+            QSet<int> days;
+            for(const QJsonValue& day : msg["days"].toArray())
+            {
+                days.insert(day.toInt());
+            }
+
+            alarm_.mon = days.contains(mon);
+            alarm_.tue = days.contains(tue);
+            alarm_.wed = days.contains(wed);
+            alarm_.thu = days.contains(thu);
+            alarm_.fri = days.contains(fri);
+            alarm_.sat = days.contains(sat);
+            alarm_.sun = days.contains(sun);
+
+            emit alarmChanged();
+        }
     }
 }
 
@@ -90,29 +118,29 @@ void DeviceManager::sendJson(const QJsonObject& msg)
 
 void DeviceManager::setColor(const QColor& color)
 {
-    if(!color_.isValid())
+    if(!light_.color.isValid())
     {
         return;
     }
 
-    color_ = color;
+    light_.color = color;
     QJsonObject msg = {
         {"cmd", "set_color"},
     };
-    msg["blue"] = color_.blue();
-    msg["red"] = color_.red();
-    msg["green"] = color_.green();
+    msg["blue"] = light_.color.blue();
+    msg["red"] = light_.color.red();
+    msg["green"] = light_.color.green();
 
     sendJson(msg);
 }
 
 void DeviceManager::setPower(bool on)
 {
-    power_ = on;
+    light_.power = on;
     QJsonObject msg = {
         {"cmd", "set_power"},
     };
-    msg["power"] = power_;
+    msg["power"] = light_.power;
     sendJson(msg);
 }
 
@@ -121,6 +149,62 @@ void DeviceManager::requestColor()
     QJsonObject msg = {
         {"cmd", "get_color"},
     };
+
+    sendJson(msg);
+}
+
+void DeviceManager::requestAlarm()
+{
+    QJsonObject msg = {
+        {"cmd", "get_alarm"},
+    };
+
+    sendJson(msg);
+}
+
+void DeviceManager::setAlarm(const alarm_t& alarm)
+{
+    alarm_ = alarm;
+
+    QJsonObject msg = {
+        {"cmd", "set_alarm"},
+    };
+    msg["name"] = alarm_.name;
+    msg["active"] = alarm_.active;
+    msg["hour"] = alarm_.hour;
+    msg["minute"] = alarm_.minute;
+
+    QJsonArray days;
+    if(alarm_.mon)
+    {
+        days.append(mon);
+    }
+    if(alarm_.tue)
+    {
+        days.append(tue);
+    }
+    if(alarm_.wed)
+    {
+        days.append(wed);
+    }
+    if(alarm_.thu)
+    {
+        days.append(thu);
+    }
+    if(alarm_.fri)
+    {
+        days.append(fri);
+    }
+    if(alarm_.sat)
+    {
+        days.append(sat);
+    }
+    if(alarm_.sun)
+    {
+        days.append(sun);
+    }
+
+    msg["days"] = days;
 
     sendJson(msg);
 }

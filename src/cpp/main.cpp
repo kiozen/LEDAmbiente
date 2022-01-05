@@ -9,6 +9,8 @@ int main(int argc, char* argv[])
 #endif
 
     QGuiApplication app(argc, argv);
+    app.setOrganizationName("Qt");
+    app.setApplicationName("led_ambiente");
 
     ApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));

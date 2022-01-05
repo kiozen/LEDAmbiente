@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import QtQuick.Controls.Material 2.12
 
 Item {
     id: root
@@ -6,19 +7,12 @@ Item {
     // public
     function set(date) {
         // e.g. new Date(0, 0, 0,  0, 0)) // 12:00 AM
-        var hour = date.getHours(
-                    ) + (!date.getHours(
-                             ) ? 12 : date.getHours(
-                                     ) <= 12 ? 0 : -12) //24 hour to AM/PM
         repeater.itemAt(0).positionViewAtIndex(
-                    12 * (repetitions - 1) / 2 + hour - 1,
+                    24 * (repetitions - 1) / 2 + date.getHours() - 1,
                     ListView.Center) // hour
         repeater.itemAt(1).positionViewAtIndex(
                     60 / interval * (repetitions - 1) / 2 + date.getMinutes(
                         ) / interval, ListView.Center) // minute
-        repeater.itemAt(2).positionViewAtIndex(
-                    (rows - 1) / 2 + (date.getHours() < 12 ? 0 : 1),
-                    ListView.Center) // am/pm
 
         for (var column = 0; column < repeater.count; column++)
             select(repeater.itemAt(column))
@@ -48,8 +42,7 @@ Item {
         Repeater {
             id: repeater
 
-            model: [12 * repetitions, 60 / interval
-                * repetitions, ['', 'AM', 'PM', '']] // 1-12 hour, 0-59 minute, am/pm
+            model: [24 * repetitions, 60 / interval * repetitions] // 1-24 hour, 0-59 minute, am/pm
 
             delegate: ListView {
                 // hours minutes am/pm
@@ -78,6 +71,7 @@ Item {
                             rightMargin: 0.2 * parent.width
                         }
                         opacity: view.currentIndex == index ? 1 : 0.3
+                        color: Material.foreground
                     }
                 }
 
@@ -98,7 +92,7 @@ Item {
                 function get(index) {
                     // returns e.g. '00' given row
                     if (column == 0)
-                        return index % 12 + 1 // hour
+                        return index % 24 + 1 // hour
                     else if (column == 1)
                         return ('0' + (index * interval) % 60).slice(
                                     -2) // minute
@@ -125,15 +119,9 @@ Item {
 
     function get() {
         // returns e.g. '12:00 AM'
-        var hour = repeater.itemAt(0).get(repeater.itemAt(
-                                              0).currentIndex) // integer
-        var am = repeater.itemAt(2).get(repeater.itemAt(
-                                            2).currentIndex) === 'AM' // boolean
-        return new Date(0, 0, 0,
-                        hour === 12 ? (am ? 0 : 12) : (am ? hour : hour + 12),
-                        // hour
-                        repeater.itemAt(1).get(repeater.itemAt(
-                                                   1).currentIndex)) // minute
+        var hour = repeater.itemAt(0).get(repeater.itemAt(0).currentIndex)
+        var minute = repeater.itemAt(1).get(repeater.itemAt(1).currentIndex)
+        return new Date(0, 0, 0, hour, minute)
     }
 
     // Component.onCompleted: set(new Date(0, 0, 0,  0, 0)) // 12:00 AM otherwise defaults to index 0 selected
