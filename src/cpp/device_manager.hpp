@@ -96,6 +96,7 @@ private slots:
 private:
     void requestColor();
     void requestAlarm();
+    void requestPower();
 
     void sendJson(const QJsonObject& msg);
 

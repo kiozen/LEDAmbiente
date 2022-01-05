@@ -39,6 +39,7 @@ void DeviceManager::slotConnected()
 {
     requestColor();
     requestAlarm();
+    requestPower();
     connected_ = true;
     emit connectedChanged();
 }
@@ -70,7 +71,9 @@ void DeviceManager::slotReadyRead()
             quint8 blue = msg["blue"].toInt();
             light_.color = QColor(red, green, blue);
             emit colorChanged();
-
+        }
+        else if(msg["rsp"] == "get_power")
+        {
             light_.power = msg["power"].toBool();
             emit powerChanged();
         }
@@ -157,6 +160,15 @@ void DeviceManager::requestAlarm()
 {
     QJsonObject msg = {
         {"cmd", "get_alarm"},
+    };
+
+    sendJson(msg);
+}
+
+void DeviceManager::requestPower()
+{
+    QJsonObject msg = {
+        {"cmd", "get_power"},
     };
 
     sendJson(msg);
