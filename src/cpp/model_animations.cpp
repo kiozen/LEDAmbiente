@@ -72,3 +72,38 @@ QVariant ModelAnimations::data(const QModelIndex& index, int role) const
     return value;
 }
 
+void ModelAnimations::setCurrentIndex(int index)
+{
+    currentIndex_ = index;
+    emit currentIndexChanged();
+}
+
+void ModelAnimations::setCurrentAnimation(const QString& hash)
+{
+    int newIndex = -1;
+    for(int i = 0; i < animations_.count(); i++)
+    {
+        if(animations_.at(i).hash == hash)
+        {
+            newIndex = i;
+            break;
+        }
+    }
+
+    setCurrentIndex(newIndex);
+}
+
+Q_INVOKABLE QString ModelAnimations::resolveHash(const QString& hash) const
+{
+    QString name;
+    for(const animation_t& animation : animations_)
+    {
+        if(hash == animation.hash)
+        {
+            name = animation.name;
+            break;
+        }
+    }
+
+    return name;
+}

@@ -14,6 +14,7 @@ struct alarm_t
     Q_GADGET
 public:
     QString name;
+    QString animationHash;
     bool active {false};
     qint32 hour {-1};
     qint32 minute {-1};
@@ -25,6 +26,7 @@ public:
     bool sat {false};
     bool sun {false};
     Q_PROPERTY(QString name MEMBER name)
+    Q_PROPERTY(QString animationHash MEMBER animationHash)
     Q_PROPERTY(bool active MEMBER active)
     Q_PROPERTY(qint32 hour MEMBER hour)
     Q_PROPERTY(qint32 minute MEMBER minute)
@@ -112,7 +114,6 @@ signals:
     void lightChanged();
     void animationChanged();
     void alarmChanged();
-//    void animationsChanged();
 
 private slots:
     void slotConnected();
@@ -124,6 +125,7 @@ private:
     void requestColor();
     void requestAlarm();
     void requestPower();
+    void requestAnimation();
     void requestAnimations();
 
     void sendJson(const QJsonObject& msg);
@@ -133,7 +135,6 @@ private:
     bool connected_;
 
     QString name_;
-
 
     light_t light_;
     animation_t animation_;

@@ -9,13 +9,12 @@ Button {
     icon.source: "/icons/power-sharp.png"
     icon.height: 100
     icon.width: 100
-    icon.color: checked ? "green" : Material.foreground
+    icon.color: idPowerButton.enabled ? checked ? "green" : Material.foreground : Material.buttonDisabledColor
 
     background: Rectangle {
         border.width: idPowerButton.checked ? 2 : 1
-        border.color: idPowerButton.checked ? "green" : Material.foreground
+        border.color: idPowerButton.enabled ? idPowerButton.checked ? "green" : Material.foreground : Material.buttonDisabledColor
         radius: 4
         color: Material.background
     }
-
 }

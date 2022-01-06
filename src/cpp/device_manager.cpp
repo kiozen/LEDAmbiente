@@ -39,10 +39,15 @@ Q_INVOKABLE void DeviceManager::disconnectFromDevice()
 
 void DeviceManager::slotConnected()
 {
+    // the order of the requests matters
     requestColor();
-    requestAlarm();
     requestPower();
+    // request list of animations befor
+    // requesting the current animation
+    // or alarm
     requestAnimations();
+    requestAnimation();
+    requestAlarm();
     connected_ = true;
     emit connectedChanged();
 }
@@ -108,7 +113,15 @@ void DeviceManager::slotReadyRead()
             alarm_.sat = days.contains(sat);
             alarm_.sun = days.contains(sun);
 
+            alarm_.animationHash = msg["animation_hash"].toString();
+
             emit alarmChanged();
+        }
+        else if(msg["rsp"] == "get_animation")
+        {
+            animation_.hash = msg.value("hash").toString();
+            animations_->setCurrentAnimation(animation_.hash);
+            emit animationChanged();
         }
         else if(msg["rsp"] == "get_animations")
         {
@@ -150,6 +163,15 @@ void DeviceManager::requestPower()
 {
     QJsonObject msg = {
         {"cmd", "get_power"},
+    };
+
+    sendJson(msg);
+}
+
+void DeviceManager::requestAnimation()
+{
+    QJsonObject msg = {
+        {"cmd", "get_animation"},
     };
 
     sendJson(msg);
@@ -251,8 +273,10 @@ void DeviceManager::setAlarm(const alarm_t& alarm)
     }
 
     msg["days"] = days;
+    msg["animation_hash"] = alarm_.animationHash;
 
     sendJson(msg);
+    emit alarmChanged();
 }
 
 void DeviceManager::setAnimation(const QString& hash)

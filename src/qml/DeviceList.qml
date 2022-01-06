@@ -10,49 +10,43 @@ Page {
         anchors.fill: parent
         anchors.margins: 6
 
-        delegate: ItemDelegate {
+        delegate: Button {
             width: idListDevice.width
-            height: idButton.height + 2
+            height: idGrid.height + 2
 
-            Button {
-                id: idButton
-                width: parent.width
-                height: idGrid.height
+            onClicked: {
+                deviceManager.connectToDevice(deviceAddr, deviceName)
+            }
 
-                onClicked: {
-                    deviceManager.connectToDevice(deviceAddr, deviceName)
+            Grid {
+                id: idGrid
+                columns: 2
+                columnSpacing: 6
+                rowSpacing: 2
+                padding: 6
+
+                Label {
+                    text: qsTr("Name")
                 }
 
-                Grid {
-                    id: idGrid
-                    columns: 2
-                    columnSpacing: 6
-                    rowSpacing: 2
-                    padding: 6
+                Label {
+                    text: deviceName
+                }
 
-                    Label {
-                        text: qsTr("Name")
-                    }
+                Label {
+                    text: qsTr("IP")
+                }
 
-                    Label {
-                        text: deviceName
-                    }
+                Label {
+                    text: deviceAddr
+                }
 
-                    Label {
-                        text: qsTr("IP")
-                    }
+                Label {
+                    text: qsTr("MAC")
+                }
 
-                    Label {
-                        text: deviceAddr
-                    }
-
-                    Label {
-                        text: qsTr("MAC")
-                    }
-
-                    Label {
-                        text: deviceMac
-                    }
+                Label {
+                    text: deviceMac
                 }
             }
         }

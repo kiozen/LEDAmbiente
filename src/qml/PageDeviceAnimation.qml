@@ -17,39 +17,43 @@ Page {
             Layout.topMargin: 10
             Layout.fillHeight: true
 
+            currentIndex: deviceManager.animations.currentIndex
+
             delegate: ItemDelegate {
                 width: idListAnimations.width
-                height: idButton.height + 2
+                Column {
+                    anchors.fill: parent
+                    anchors.margins: 6
+                    Label {
+                        text: animationName
+                        font.bold: true
+                    }
 
-                Button {
-                    id: idButton
-                    width: parent.width
-                    height: idGrid.height
-
-                    onClicked: deviceManager.animation.hash = animationHash
-
-                    Grid {
-                        id: idGrid
-                        columns: 1
-                        columnSpacing: 6
-                        rowSpacing: 2
-                        padding: 6
-
-                        Label {
-                            text: animationName
-                            font.bold: true
-                        }
-
-                        Label {
-                            text: animationDescription
-                        }
+                    Label {
+                        text: animationDescription
                     }
                 }
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        deviceManager.animations.currentIndex = index
+                        deviceManager.animation.hash = animationHash
+                    }
+                }
+            }
+            highlightResizeDuration: 300
+            highlight: Rectangle {
+                color: "transparent"
+                radius: 5
+                border.color: Material.highlightedButtonColor
+                border.width: 1
             }
         }
 
         PowerButton {
             id: idPowerButton
+
+            enabled: deviceManager.animations.currentIndex !== -1
 
             Layout.alignment: Qt.AlignCenter
             Layout.topMargin: 10

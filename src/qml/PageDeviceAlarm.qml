@@ -55,8 +55,10 @@ Page {
         Item {
             enabled: idSwitch.checked
             Layout.fillWidth: true
+            Layout.preferredHeight: idGridDays.height
 
             GridLayout {
+                id: idGridDays
                 anchors.horizontalCenter: parent.horizontalCenter
                 columns: 7
 
@@ -193,6 +195,54 @@ Page {
                 }
             }
         }
+
+        Label {
+            enabled: idSwitch.checked
+            Layout.preferredWidth: idGridDays.width
+            Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: 30
+            text: qsTr("start animation:")
+        }
+
+        ComboBox {
+            id: idComboBox
+            enabled: idSwitch.checked
+
+            Layout.preferredWidth: idGridDays.width
+            Layout.alignment: Qt.AlignHCenter
+
+            model: deviceManager.animations
+
+            displayText: deviceManager.animations.resolveHash(
+                             deviceManager.alarm.animationHash)
+
+            delegate: ItemDelegate {
+                width: parent.width
+                text: animationName
+                onClicked: {
+                    deviceManager.alarm.animationHash = animationHash
+                    idComboBox.displayText = deviceManager.animations.resolveHash(
+                                animationHash)
+                }
+            }
+        }
+
+        Label {
+            id: idWarning
+            Layout.fillWidth: true
+            Layout.margins: 10
+            text: qsTr(
+                      "Warning: You have to choose an animation and a weekday.")
+            visible: !deviceManager.alarm.animationHash
+                     || !(deviceManager.alarm.mon | deviceManager.alarm.tue
+                          | deviceManager.alarm.wed | deviceManager.alarm.thu
+                          | deviceManager.alarm.fri | deviceManager.alarm.sat
+                          | deviceManager.alarm.sun)
+
+            wrapMode: Text.Wrap
+            font.bold: true
+        }
+
         Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true

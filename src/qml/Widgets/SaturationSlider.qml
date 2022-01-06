@@ -1,17 +1,18 @@
 import QtQuick 2.12
+import QtQuick.Controls.Material 2.12
 
 Item {
     id: root
     property real value: 1.0
     property real hue: 0
 
-    signal clicked()
+    signal clicked
 
     Rectangle {
         id: idColorBar
 
         anchors.fill: parent
-        border.color: "black"
+        border.color: "dimgray"
         border.width: 1
 
         gradient: Gradient {
@@ -53,7 +54,7 @@ Item {
         property int center: root.value * idMouseArea.width
         height: parent.height
         width: 5
-        border.color: "white"
+        border.color: "dimgray"
         border.width: 2
         color: "transparent"
         y: 0
