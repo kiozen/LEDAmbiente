@@ -5,6 +5,8 @@ Item {
     property real value: 1.0
     property real hue: 0
 
+    signal clicked()
+
     Rectangle {
         id: idColorBar
 
@@ -33,6 +35,7 @@ Item {
             function handleMouse(mouse) {
                 if (mouse.buttons & Qt.LeftButton) {
                     root.value = Math.max(0, Math.min(width, mouse.x)) / width
+                    root.clicked()
                 }
             }
 

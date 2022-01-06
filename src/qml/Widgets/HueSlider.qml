@@ -4,6 +4,8 @@ Item {
     id: root
     property real value: 0
 
+    signal clicked()
+
     Rectangle {
         id: idColorBar
 
@@ -53,6 +55,7 @@ Item {
                 if (mouse.buttons & Qt.LeftButton) {
                     root.value = 1.0 - Math.max(0, Math.min(width,
                                                             mouse.x)) / width
+                    root.clicked()
                 }
             }
 

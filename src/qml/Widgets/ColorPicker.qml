@@ -8,6 +8,8 @@ Item {
     property color color: "transparent"
     property color colorIn: "transparent"
 
+    signal clicked()
+
     onColorInChanged: {
         idHueSlider.value = colorIn.hsvHue
         idSaturationSlider.value = colorIn.hsvSaturation
@@ -26,6 +28,7 @@ Item {
             id: idHueSlider
             Layout.fillWidth: true
             height: 60
+            onClicked: root.clicked()
         }
 
         SaturationSlider {
@@ -33,6 +36,7 @@ Item {
             Layout.fillWidth: true
             hue: idHueSlider.value
             height: 60
+            onClicked: root.clicked()
         }
 
         BrightnessSlider {
@@ -40,6 +44,7 @@ Item {
             Layout.fillWidth: true
             hue: idHueSlider.value
             height: 60
+            onClicked: root.clicked()
         }
 
         Label {

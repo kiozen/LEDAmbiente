@@ -166,16 +166,14 @@ void DeviceManager::requestAnimations()
 
 void DeviceManager::setLight(const light_t& light)
 {
-    if(light.color != light_.color)
-    {
-        QJsonObject msg = {
-            {"cmd", "set_color"},
-            {"blue", light.color.blue()},
-            {"red", light.color.red()},
-            {"green", light.color.green()},
-        };
-        sendJson(msg);
-    }
+    QJsonObject msg = {
+        {"cmd", "set_color"},
+        {"blue", light.color.blue()},
+        {"red", light.color.red()},
+        {"green", light.color.green()},
+    };
+    sendJson(msg);
+
 
     if(light.power != light_.power)
     {
@@ -191,14 +189,12 @@ void DeviceManager::setLight(const light_t& light)
 
 void DeviceManager::setAnimation(const animation_t& animation)
 {
-    if(animation.hash != animation_.hash)
-    {
-        QJsonObject msg = {
-            {"cmd", "set_animation"},
-            {"hash", animation.hash}
-        };
-        sendJson(msg);
-    }
+    QJsonObject msg = {
+        {"cmd", "set_animation"},
+        {"hash", animation.hash}
+    };
+    sendJson(msg);
+
 
     if(animation.power != animation_.power)
     {

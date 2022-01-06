@@ -16,7 +16,7 @@ Page {
             Layout.topMargin: 10
             Layout.minimumHeight: 3 * 60 + 10 + 3 * 5
             colorIn: deviceManager.light.color
-            onColorChanged: deviceManager.light.color = color
+            onClicked: deviceManager.light.color = color
         }
 
         Rectangle {
