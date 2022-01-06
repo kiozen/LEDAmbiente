@@ -7,6 +7,8 @@
 #include <QObject>
 #include <QTime>
 
+#include "model_animations.hpp"
+
 struct alarm_t
 {
     Q_GADGET
@@ -36,15 +38,40 @@ public:
 };
 Q_DECLARE_METATYPE(alarm_t)
 
+struct light_t
+{
+    Q_GADGET
+public:
+    QColor color;
+    bool power {false};
+    Q_PROPERTY(bool power MEMBER power)
+    Q_PROPERTY(QColor color MEMBER color)
+};
+Q_DECLARE_METATYPE(light_t)
+
+struct animation_t
+{
+    Q_GADGET
+public:
+    QString hash;
+    bool power {false};
+    Q_PROPERTY(QString hash MEMBER hash)
+    Q_PROPERTY(bool power MEMBER power)
+};
+Q_DECLARE_METATYPE(animation_t)
+
 
 class DeviceManager : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool connected READ connected NOTIFY connectedChanged)
-    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
-    Q_PROPERTY(bool power READ power WRITE setPower NOTIFY powerChanged)
+
+    Q_PROPERTY(light_t light READ light WRITE setLight NOTIFY lightChanged)
+    Q_PROPERTY(animation_t animation READ animation WRITE setAnimation NOTIFY animationChanged)
     Q_PROPERTY(alarm_t alarm READ alarm WRITE setAlarm NOTIFY alarmChanged)
+
+    Q_PROPERTY(ModelAnimations * animations READ animations CONSTANT)
 public:
     DeviceManager(QObject* parent);
     virtual ~DeviceManager() = default;
@@ -53,19 +80,15 @@ public:
     Q_INVOKABLE void disconnectFromDevice();
 
     bool connected() const {return connected_;}
-
-    QColor color() const {return light_.color;}
-    void setColor(const QColor& color);
-
     QString name() const {return name_;}
 
-    bool power() const {return light_.power;}
-    void setPower(bool on);
+    light_t light() const {return light_;}
+    void setLight(const light_t& light);
 
-    alarm_t alarm() const
-    {
-        return alarm_;
-    }
+    animation_t animation() const {return animation_;}
+    void setAnimation(const animation_t& animation);
+
+    alarm_t alarm() const {return alarm_;}
     void setAlarm(const alarm_t& alarm);
 
     enum day_e
@@ -80,12 +103,16 @@ public:
     };
     Q_ENUMS(day_e)
 
+    ModelAnimations * animations(){return animations_;}
+    void setAnimation(const QString& hash);
+
 signals:
     void connectedChanged();
-    void colorChanged();
     void nameChanged();
-    void powerChanged();
+    void lightChanged();
+    void animationChanged();
     void alarmChanged();
+//    void animationsChanged();
 
 private slots:
     void slotConnected();
@@ -97,6 +124,7 @@ private:
     void requestColor();
     void requestAlarm();
     void requestPower();
+    void requestAnimations();
 
     void sendJson(const QJsonObject& msg);
 
@@ -106,15 +134,11 @@ private:
 
     QString name_;
 
-    struct light_t
-    {
-        QColor color;
-        bool power;
-    };
 
     light_t light_;
-
+    animation_t animation_;
     alarm_t alarm_;
+    ModelAnimations* animations_;
 };
 
 #endif // SRC_CPP_DEVICE_MANAGER_HPP

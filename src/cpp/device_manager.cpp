@@ -10,6 +10,7 @@
 DeviceManager::DeviceManager(QObject* parent)
     : QObject(parent)
 {
+    animations_ = new ModelAnimations(this);
     socket_ = new QTcpSocket(this);
     socket_->setSocketOption(QAbstractSocket::LowDelayOption, 1);
     connect(socket_, &QTcpSocket::connected, this, &DeviceManager::slotConnected);
@@ -35,11 +36,13 @@ Q_INVOKABLE void DeviceManager::disconnectFromDevice()
     socket_->disconnectFromHost();
 }
 
+
 void DeviceManager::slotConnected()
 {
     requestColor();
     requestAlarm();
     requestPower();
+    requestAnimations();
     connected_ = true;
     emit connectedChanged();
 }
@@ -70,12 +73,14 @@ void DeviceManager::slotReadyRead()
             quint8 green = msg["green"].toInt();
             quint8 blue = msg["blue"].toInt();
             light_.color = QColor(red, green, blue);
-            emit colorChanged();
+            emit lightChanged();
         }
         else if(msg["rsp"] == "get_power")
         {
-            light_.power = msg["power"].toBool();
-            emit powerChanged();
+            light_.power = msg["light"].toBool();
+            emit lightChanged();
+            animation_.power = msg["animation"].toBool();
+            emit animationChanged();
         }
         else if(msg["rsp"] == "get_name")
         {
@@ -105,6 +110,10 @@ void DeviceManager::slotReadyRead()
 
             emit alarmChanged();
         }
+        else if(msg["rsp"] == "get_animations")
+        {
+            animations_->update(msg["animations"].toArray());
+        }
     }
 }
 
@@ -117,34 +126,6 @@ void DeviceManager::sendJson(const QJsonObject& msg)
     {
         qDebug() << "Failed to send command" << msg["cmd"] << "." << socket_->errorString();
     }
-}
-
-void DeviceManager::setColor(const QColor& color)
-{
-    if(!light_.color.isValid())
-    {
-        return;
-    }
-
-    light_.color = color;
-    QJsonObject msg = {
-        {"cmd", "set_color"},
-    };
-    msg["blue"] = light_.color.blue();
-    msg["red"] = light_.color.red();
-    msg["green"] = light_.color.green();
-
-    sendJson(msg);
-}
-
-void DeviceManager::setPower(bool on)
-{
-    light_.power = on;
-    QJsonObject msg = {
-        {"cmd", "set_power"},
-    };
-    msg["power"] = light_.power;
-    sendJson(msg);
 }
 
 void DeviceManager::requestColor()
@@ -172,6 +153,63 @@ void DeviceManager::requestPower()
     };
 
     sendJson(msg);
+}
+
+void DeviceManager::requestAnimations()
+{
+    QJsonObject msg = {
+        {"cmd", "get_animations"},
+    };
+
+    sendJson(msg);
+}
+
+void DeviceManager::setLight(const light_t& light)
+{
+    if(light.color != light_.color)
+    {
+        QJsonObject msg = {
+            {"cmd", "set_color"},
+            {"blue", light.color.blue()},
+            {"red", light.color.red()},
+            {"green", light.color.green()},
+        };
+        sendJson(msg);
+    }
+
+    if(light.power != light_.power)
+    {
+        QJsonObject msg = {
+            {"cmd", "set_power_light"},
+            {"power", light.power}
+        };
+        sendJson(msg);
+    }
+
+    light_ = light;
+}
+
+void DeviceManager::setAnimation(const animation_t& animation)
+{
+    if(animation.hash != animation_.hash)
+    {
+        QJsonObject msg = {
+            {"cmd", "set_animation"},
+            {"hash", animation.hash}
+        };
+        sendJson(msg);
+    }
+
+    if(animation.power != animation_.power)
+    {
+        QJsonObject msg = {
+            {"cmd", "set_power_animation"},
+            {"power", animation.power}
+        };
+        sendJson(msg);
+    }
+
+    animation_ = animation;
 }
 
 void DeviceManager::setAlarm(const alarm_t& alarm)
@@ -221,3 +259,13 @@ void DeviceManager::setAlarm(const alarm_t& alarm)
     sendJson(msg);
 }
 
+void DeviceManager::setAnimation(const QString& hash)
+{
+    QJsonObject msg = {
+        {"cmd", "set_animation"},
+    };
+
+    msg["hash"] = hash;
+
+    sendJson(msg);
+}

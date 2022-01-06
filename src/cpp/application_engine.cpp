@@ -13,6 +13,8 @@ ApplicationEngine::ApplicationEngine()
     model_devices_ = new ModelDevice(this);
     device_manager_ = new DeviceManager(this);
 
+    qRegisterMetaType<light_t>();
+    qRegisterMetaType<animation_t>();
     qRegisterMetaType<alarm_t>();
 
     context->setContextProperty("modelDevices", model_devices_);

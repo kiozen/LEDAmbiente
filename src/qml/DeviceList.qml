@@ -12,10 +12,10 @@ Page {
 
         delegate: ItemDelegate {
             width: idListDevice.width
-            height: idRectangle.height + 2
+            height: idButton.height + 2
 
             Button {
-                id: idRectangle
+                id: idButton
                 width: parent.width
                 height: idGrid.height
 

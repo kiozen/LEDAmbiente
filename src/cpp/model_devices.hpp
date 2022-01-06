@@ -10,6 +10,7 @@
 
 class ModelDevice : public QAbstractListModel
 {
+    Q_OBJECT
 public:
     ModelDevice(QObject* parent);
     virtual ~ModelDevice() = default;

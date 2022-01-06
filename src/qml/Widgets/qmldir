@@ -4,3 +4,4 @@ SaturationSlider 1.0 SaturationSlider.qml
 BrightnessSlider 1.0 BrightnessSlider.qml
 ColorPicker 1.0 ColorPicker.qml
 TimePicker 1.0 TimePicker.qml
+PowerButton 1.0 PowerButton.qml

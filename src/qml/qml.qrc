@@ -12,6 +12,7 @@
         <file>Widgets/BrightnessSlider.qml</file>
         <file>Widgets/ColorPicker.qml</file>
         <file>Widgets/TimePicker.qml</file>
+        <file>Widgets/PowerButton.qml</file>
         <file>Widgets/qmldir</file>
     </qresource>
 </RCC>

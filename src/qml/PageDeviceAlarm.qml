@@ -5,6 +5,7 @@ import QtQuick.Controls.Material 2.12
 import Widgets 1.0
 
 Page {
+    title: qsTr("Alarm Clock")
     ColumnLayout {
         anchors.fill: parent
 
@@ -65,7 +66,6 @@ Page {
                     Connections {
                         target: deviceManager
                         function onAlarmChanged() {
-                            console.debug("xxxxx", deviceManager.alarm.mon)
                             idCheckMon.checked = deviceManager.alarm.mon
                         }
                     }

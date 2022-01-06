@@ -1,8 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.5
-import QtQuick.Dialogs 1.3
 import QtQuick.Layouts 1.12
-import Widgets 1.0
 import Qt.labs.settings 1.0
 
 Page {
@@ -11,6 +9,10 @@ Page {
     Settings {
         id: idSettings
         property string devicePage: "PageDeviceLight.qml"
+    }
+
+    ButtonGroup {
+        buttons: idButtonLayout.children
     }
 
     ColumnLayout {
@@ -22,28 +24,48 @@ Page {
             Layout.fillHeight: true
 
             source: idSettings.devicePage
+
+            onSourceChanged: {
+                if (source == "qrc:/PageDeviceLight.qml") {
+                    idButtonLight.checked = true
+                } else if (source == "qrc:/PageDeviceAnimation.qml") {
+                    idButtonAnimation.checked = true
+                } else if (source == "qrc:/PageDeviceAlarm.qml") {
+                    idButtonAlarm.checked = true
+                }
+            }
         }
 
         RowLayout {
+            id: idButtonLayout
             Layout.fillWidth: true
 
             Button {
+                id: idButtonLight
                 Layout.fillWidth: true
                 text: qsTr("light")
                 onClicked: idSettings.devicePage = "PageDeviceLight.qml"
                 flat: true
+                checkable: true
+                highlighted: checked
             }
             Button {
-                Layout.fillWidth: true
-                text: qsTr("alarm")
-                onClicked: idSettings.devicePage = "PageDeviceAlarm.qml"
-                flat: true
-            }
-            Button {
+                id: idButtonAnimation
                 Layout.fillWidth: true
                 text: qsTr("anim.")
                 onClicked: idSettings.devicePage = "PageDeviceAnimation.qml"
                 flat: true
+                checkable: true
+                highlighted: checked
+            }
+            Button {
+                id: idButtonAlarm
+                Layout.fillWidth: true
+                text: qsTr("alarm")
+                onClicked: idSettings.devicePage = "PageDeviceAlarm.qml"
+                flat: true
+                checkable: true
+                highlighted: checked
             }
         }
     }

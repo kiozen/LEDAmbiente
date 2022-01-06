@@ -28,6 +28,7 @@ set (SRC
     cpp/main.cpp
     cpp/application_engine.cpp
     cpp/model_devices.cpp
+    cpp/model_animations.cpp
     cpp/device_manager.cpp
 )
 
@@ -35,6 +36,7 @@ set (HDR
     cpp/application_engine.hpp
     cpp/model_devices.hpp
     cpp/device_manager.hpp
+    cpp/model_animations.hpp
 )
 
 set( RCS
