@@ -1,0 +1,3 @@
+V 1.0.0
+* Initial release
+* Works together with V 1.0.0 of LED Control
