@@ -21,16 +21,24 @@ Page {
 
             delegate: ItemDelegate {
                 width: idListAnimations.width
+                height: idLabelName.height * 3 + 12
                 Column {
-                    anchors.fill: parent
+                    id: idAnimDesc
                     anchors.margins: 6
+                    anchors.fill: parent
+
                     Label {
+                        id: idLabelName
+                        width: parent.width
                         text: animationName
                         font.bold: true
                     }
 
                     Label {
+                        id: idLabelDesc
+                        width: parent.width
                         text: animationDescription
+                        wrapMode: Text.Wrap
                     }
                 }
                 MouseArea {
