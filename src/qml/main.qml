@@ -28,19 +28,19 @@ ApplicationWindow {
     title: qsTr("LED Ambiente")
 
     header: ToolBar {
-        contentHeight: toolButton.implicitHeight
+        contentHeight: toolButtonBack.implicitHeight
 
         ToolButton {
-            id: toolButton
+            id: toolButtonBack
             visible: stackView.depth > 1
             icon.source: "icons/back-sharp.png"
             icon.color: Material.foreground
-            font.pixelSize: Qt.application.font.pixelSize * 1.6
-            onClicked: {
-                if (stackView.depth > 1) {
-                    deviceManager.disconnectFromDevice()
-                } else {
 
+            onClicked: {
+                if (stackView.depth == 2) {
+                    deviceManager.disconnectFromDevice()
+                } else if (stackView.depth == 3) {
+                    stackView.pop()
                 }
             }
         }
@@ -48,6 +48,19 @@ ApplicationWindow {
         Label {
             text: stackView.currentItem.title
             anchors.centerIn: parent
+        }
+
+        ToolButton {
+            id: toolButtonMenu
+            visible: stackView.depth == 2
+            icon.source: "icons/menu-sharp.png"
+            icon.color: Material.foreground
+            anchors.right: parent.right
+
+            onClicked: {
+                //idDeviceMenu.popup()
+                stackView.push("PageDeviceSetup.qml")
+            }
         }
     }
 
@@ -62,10 +75,21 @@ ApplicationWindow {
                 if (deviceManager.connected) {
                     stackView.push("Device.qml")
                 } else {
-                    if (stackView.depth > 1) {
+                    while (stackView.depth > 1) {
                         stackView.pop()
                     }
                 }
+            }
+        }
+    }
+
+    Menu {
+        id: idDeviceMenu
+
+        MenuItem {
+            text: qsTr("device setup")
+            onClicked: {
+                stackView.push("PageDeviceSetup.qml")
             }
         }
     }

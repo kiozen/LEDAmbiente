@@ -156,6 +156,14 @@ void ModelDevice::SlotReceive()
     }
     else
     {
-        devices_[mac].last_seen.restart();
+        const QString& name = msg["name"].toString();
+        device_info_t& info = devices_[mac];
+        if(info.name != name)
+        {
+            beginResetModel();
+            info.name = name;
+            endResetModel();
+        }
+        info.last_seen.restart();
     }
 }
