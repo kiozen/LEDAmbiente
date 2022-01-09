@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>icons/power-sharp.png</file>
         <file>icons/back-sharp.png</file>
+        <file>icons/menu-sharp.png</file>
     </qresource>
 </RCC>

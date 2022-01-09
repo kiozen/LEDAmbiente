@@ -43,7 +43,8 @@ DeviceManager::DeviceManager(QObject* parent)
 Q_INVOKABLE void DeviceManager::connectToDevice(const QString& ip, const QString& name)
 {
     qDebug() << "connectToDevice" << ip << name;
-    name_ = name;
+    system_.initialName = name;
+    system_.name.clear();
     socket_->connectToHost(ip, 7756);
 }
 
@@ -57,6 +58,7 @@ Q_INVOKABLE void DeviceManager::disconnectFromDevice()
 void DeviceManager::slotConnected()
 {
     // the order of the requests matters
+    requestSystenConfig();
     requestColor();
     requestPower();
     // request list of animations befor
@@ -89,7 +91,9 @@ void DeviceManager::slotReadyRead()
         const QJsonObject& msg = QJsonDocument::fromJson(data).object();
         qDebug() << "recv:" << msg;
 
-        if(msg["rsp"] == "get_color")
+        const QString& rsp = msg["rsp"].toString();
+
+        if(rsp == "get_color")
         {
             quint8 red = msg["red"].toInt();
             quint8 green = msg["green"].toInt();
@@ -97,19 +101,14 @@ void DeviceManager::slotReadyRead()
             light_.color = QColor(red, green, blue);
             emit lightChanged();
         }
-        else if(msg["rsp"] == "get_power")
+        else if(rsp == "get_power")
         {
             light_.power = msg["light"].toBool();
             emit lightChanged();
             animation_.power = msg["animation"].toBool();
             emit animationChanged();
         }
-        else if(msg["rsp"] == "get_name")
-        {
-            name_ = msg["name"].toString();
-            emit nameChanged();
-        }
-        else if(msg["rsp"] == "get_alarm")
+        else if(rsp == "get_alarm")
         {
             alarm_.name = msg["name"].toString();
             alarm_.active = msg["active"].toBool();
@@ -134,15 +133,26 @@ void DeviceManager::slotReadyRead()
 
             emit alarmChanged();
         }
-        else if(msg["rsp"] == "get_animation")
+        else if(rsp == "get_animation")
         {
             animation_.hash = msg.value("hash").toString();
             animations_->setCurrentAnimation(animation_.hash);
             emit animationChanged();
         }
-        else if(msg["rsp"] == "get_animations")
+        else if(rsp == "get_animations")
         {
             animations_->update(msg["animations"].toArray());
+        }
+        else if(rsp == "get_system_config")
+        {
+            const QString& name = msg["name"].toString();
+            if(!name.isEmpty())
+            {
+                system_.name = name;
+            }
+            system_.led_count = msg["led_count"].toInt();
+            system_.max_brightness = msg["max_brightness"].toInt();
+            emit systemChanged();
         }
     }
 }
@@ -156,6 +166,15 @@ void DeviceManager::sendJson(const QJsonObject& msg)
     {
         qDebug() << "Failed to send command" << msg["cmd"] << "." << socket_->errorString();
     }
+}
+
+void DeviceManager::requestSystenConfig()
+{
+    QJsonObject msg = {
+        {"cmd", "get_system_config"},
+    };
+
+    sendJson(msg);
 }
 
 void DeviceManager::requestColor()
@@ -294,6 +313,28 @@ void DeviceManager::setAlarm(const alarm_t& alarm)
 
     sendJson(msg);
     emit alarmChanged();
+}
+
+void DeviceManager::setSystem(const system_t& system)
+{
+    if(system_.name != system.name)
+    {
+        system_.name = system.name;
+        emit nameChanged();
+    }
+
+    system_ = system;
+
+    QJsonObject msg = {
+        {"cmd", "set_system_config"},
+    };
+
+    msg["name"] = system_.name;
+    msg["led_count"] = system_.led_count;
+    msg["max_brightness"] = system_.max_brightness;
+
+    sendJson(msg);
+    emit systemChanged();
 }
 
 void DeviceManager::setAnimation(const QString& hash)

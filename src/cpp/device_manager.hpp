@@ -68,6 +68,20 @@ public:
 };
 Q_DECLARE_METATYPE(light_t)
 
+struct system_t
+{
+    Q_GADGET
+public:
+    QString initialName;
+    QString name;
+    int led_count{0};
+    quint8 max_brightness{0};
+    Q_PROPERTY(QString name MEMBER name)
+    Q_PROPERTY(int led_count MEMBER led_count)
+    Q_PROPERTY(quint8 max_brightness MEMBER max_brightness)
+};
+Q_DECLARE_METATYPE(system_t)
+
 struct animation_t
 {
     Q_GADGET
@@ -84,11 +98,12 @@ class DeviceManager : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool connected READ connected NOTIFY connectedChanged)
-    Q_PROPERTY(QString name READ name NOTIFY nameChanged)
-
     Q_PROPERTY(light_t light READ light WRITE setLight NOTIFY lightChanged)
     Q_PROPERTY(animation_t animation READ animation WRITE setAnimation NOTIFY animationChanged)
     Q_PROPERTY(alarm_t alarm READ alarm WRITE setAlarm NOTIFY alarmChanged)
+    Q_PROPERTY(system_t system READ system WRITE setSystem NOTIFY systemChanged)
+
+    Q_PROPERTY(QString name READ name NOTIFY nameChanged)
 
     Q_PROPERTY(ModelAnimations * animations READ animations CONSTANT)
 public:
@@ -99,7 +114,6 @@ public:
     Q_INVOKABLE void disconnectFromDevice();
 
     bool connected() const {return connected_;}
-    QString name() const {return name_;}
 
     light_t light() const {return light_;}
     void setLight(const light_t& light);
@@ -109,6 +123,12 @@ public:
 
     alarm_t alarm() const {return alarm_;}
     void setAlarm(const alarm_t& alarm);
+
+    system_t system() const {return system_;}
+    void setSystem(const system_t& system);
+
+    QString name() const {return system_.name.isEmpty() ? system_.initialName : system_.name;}
+
 
     enum day_e
     {
@@ -127,10 +147,11 @@ public:
 
 signals:
     void connectedChanged();
-    void nameChanged();
     void lightChanged();
     void animationChanged();
     void alarmChanged();
+    void systemChanged();
+    void nameChanged();
 
 private slots:
     void slotConnected();
@@ -139,6 +160,7 @@ private slots:
     void slotReadyRead();
 
 private:
+    void requestSystenConfig();
     void requestColor();
     void requestAlarm();
     void requestPower();
@@ -151,11 +173,10 @@ private:
     QString ip_;
     bool connected_;
 
-    QString name_;
-
     light_t light_;
     animation_t animation_;
     alarm_t alarm_;
+    system_t system_;
     ModelAnimations* animations_;
 };
 

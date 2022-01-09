@@ -1,3 +1,6 @@
+V 1.x.x
+LEDA-1: Add page to setup device's system configuration
+
 V 1.0.0
 * Initial release
 * Works together with V 1.0.0 of LED Control

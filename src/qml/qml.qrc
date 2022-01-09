@@ -6,6 +6,7 @@
         <file>PageDeviceLight.qml</file>
         <file>PageDeviceAlarm.qml</file>
         <file>PageDeviceAnimation.qml</file>
+        <file>PageDeviceSetup.qml</file>
         <file>qtquickcontrols2.conf</file>
         <file>Widgets/HueSlider.qml</file>
         <file>Widgets/SaturationSlider.qml</file>
