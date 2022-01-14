@@ -22,6 +22,7 @@ Item {
     id: root
     property real value: 1.0
     property real hue: 0
+    property real saturation: 0
 
     signal clicked
 
@@ -41,7 +42,7 @@ Item {
                 },
                 GradientStop {
                     position: 1.0
-                    color: Qt.hsva(root.hue, 1.0, 1.0, 1)
+                    color: Qt.hsva(root.hue, root.saturation, 1.0, 1)
                 }
             ]
         }
