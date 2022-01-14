@@ -1,3 +1,4 @@
+
 /**********************************************************************************************
     Copyright (C) 2022 Oliver Eichler <oliver.eichler@gmx.de>
 
@@ -25,7 +26,7 @@ Item {
     property color color: "transparent"
     property color colorIn: "transparent"
 
-    signal clicked()
+    signal clicked
 
     onColorInChanged: {
         idHueSlider.value = colorIn.hsvHue
@@ -60,6 +61,7 @@ Item {
             id: idBrightnessSlider
             Layout.fillWidth: true
             hue: idHueSlider.value
+            saturation: idSaturationSlider.value
             height: 60
             onClicked: root.clicked()
         }
