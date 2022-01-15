@@ -2,6 +2,7 @@ V 1.x.x
 LEDA-1: Add page to setup device's system configuration
 LEDA-3: The brightness slider should show the color from the saturation slider
 LEDA-5: ColorPicker: Add edit for RGB color
+LEDA-7: Properly handle back button in Android 
 
 V 1.0.0
 * Initial release

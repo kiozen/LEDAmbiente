@@ -27,6 +27,17 @@ ApplicationWindow {
     visible: true
     title: qsTr("LED Ambiente")
 
+    onClosing: {
+        if (Qt.platform.os == "android") {
+            if (stackView.depth > 1) {
+                toolButtonBack.clicked()
+                close.accepted = false
+            } else {
+                close.accepted = true
+            }
+        }
+    }
+
     header: ToolBar {
         contentHeight: toolButtonBack.implicitHeight
 
