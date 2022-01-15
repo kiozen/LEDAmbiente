@@ -1,4 +1,3 @@
-
 /**********************************************************************************************
     Copyright (C) 2022 Oliver Eichler <oliver.eichler@gmx.de>
 
@@ -20,6 +19,7 @@ import QtQuick 2.12
 import Widgets 1.0
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.12
+import QtQuick.Controls.Material 2.12
 
 Item {
     id: root
@@ -37,6 +37,12 @@ Item {
             return Qt.hsva(idHueSlider.value, idSaturationSlider.value,
                            idBrightnessSlider.value, 1)
         })
+    }
+
+    function updateFromRGB() {
+        root.colorIn = Qt.rgba(idColorRed.value, idColorGreen.value,
+                               idColorBlue.value, 1.0)
+        root.clicked()
     }
 
     ColumnLayout {
@@ -66,12 +72,37 @@ Item {
             onClicked: root.clicked()
         }
 
-        Label {
+        RowLayout {
             Layout.fillWidth: true
-            text: "color: " + root.color + " saturation: " + Math.round(
-                      root.color.hsvSaturation * 255) + "  brightness: " + Math.round(
-                      root.color.hsvValue * 255)
-            height: 20
+
+            ColorEdit {
+                id: idColorRed
+                labelText: "red:"
+                text: Math.round(root.color.r * 255)
+
+                onEditingFinished: updateFromRGB()
+            }
+
+            ColorEdit {
+                id: idColorGreen
+                labelText: "green:"
+                text: Math.round(root.color.g * 255)
+
+                onEditingFinished: updateFromRGB()
+            }
+
+            ColorEdit {
+                id: idColorBlue
+                labelText: "blue:"
+                text: Math.round(root.color.b * 255)
+
+                onEditingFinished: updateFromRGB()
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                color: "transparent"
+            }
         }
     }
 }
