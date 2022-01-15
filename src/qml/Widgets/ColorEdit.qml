@@ -1,3 +1,4 @@
+
 /**********************************************************************************************
     Copyright (C) 2022 Oliver Eichler <oliver.eichler@gmx.de>
 
@@ -34,7 +35,6 @@ GridLayout {
     Label {
         id: idLabel
         text: root.labelText
-        Layout.preferredWidth: font.pixelSize * string(text).size()
     }
 
     TextInput {
