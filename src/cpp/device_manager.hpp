@@ -25,6 +25,7 @@
 #include <QTime>
 
 #include "model_animations.hpp"
+#include "model_colors.hpp"
 
 struct alarm_t
 {
@@ -106,6 +107,7 @@ class DeviceManager : public QObject
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
 
     Q_PROPERTY(ModelAnimations * animations READ animations CONSTANT)
+    Q_PROPERTY(ModelColors * colors READ colors CONSTANT)
 public:
     DeviceManager(QObject* parent);
     virtual ~DeviceManager() = default;
@@ -143,7 +145,11 @@ public:
     Q_ENUMS(day_e)
 
     ModelAnimations * animations(){return animations_;}
+    ModelColors* colors(){return colors_;}
+
     void setAnimation(const QString& hash);
+
+    void setPredefinedColors(const QVector<QColor>& predefined);
 
 signals:
     void connectedChanged();
@@ -162,6 +168,7 @@ private slots:
 private:
     void requestSystenConfig();
     void requestColor();
+    void requestPredefinedColors();
     void requestAlarm();
     void requestPower();
     void requestAnimation();
@@ -178,6 +185,8 @@ private:
     alarm_t alarm_;
     system_t system_;
     ModelAnimations* animations_;
+    ModelColors* colors_;
 };
 
 #endif // SRC_CPP_DEVICE_MANAGER_HPP
+

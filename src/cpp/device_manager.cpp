@@ -28,6 +28,8 @@ DeviceManager::DeviceManager(QObject* parent)
     : QObject(parent)
 {
     animations_ = new ModelAnimations(this);
+    colors_ = new ModelColors(*this);
+
     socket_ = new QTcpSocket(this);
     socket_->setSocketOption(QAbstractSocket::LowDelayOption, 1);
     connect(socket_, &QTcpSocket::connected, this, &DeviceManager::slotConnected);
@@ -60,6 +62,7 @@ void DeviceManager::slotConnected()
     // the order of the requests matters
     requestSystenConfig();
     requestColor();
+    requestPredefinedColors();
     requestPower();
     // request list of animations befor
     // requesting the current animation
@@ -154,6 +157,15 @@ void DeviceManager::slotReadyRead()
             system_.max_brightness = msg["max_brightness"].toInt();
             emit systemChanged();
         }
+        else if(rsp == "get_predefined_colors")
+        {
+            QVector<QColor> colors;
+            for(const QJsonValue& color : msg["colors"].toArray())
+            {
+                colors << QColor(color.toVariant().toUInt()).toHsv();
+            }
+            colors_->SetColors(colors);
+        }
     }
 }
 
@@ -181,6 +193,15 @@ void DeviceManager::requestColor()
 {
     QJsonObject msg = {
         {"cmd", "get_color"},
+    };
+
+    sendJson(msg);
+}
+
+void DeviceManager::requestPredefinedColors()
+{
+    QJsonObject msg = {
+        {"cmd", "get_predefined_colors"},
     };
 
     sendJson(msg);
@@ -345,5 +366,20 @@ void DeviceManager::setAnimation(const QString& hash)
 
     msg["hash"] = hash;
 
+    sendJson(msg);
+}
+
+void DeviceManager::setPredefinedColors(const QVector<QColor>& predefined)
+{
+    QJsonObject msg = {
+        {"cmd", "set_predefined_colors"},
+    };
+
+    QJsonArray json;
+    for(const QColor& color : predefined)
+    {
+        json.append(QJsonValue::fromVariant(color.rgba()));
+    }
+    msg["colors"] = json;
     sendJson(msg);
 }
