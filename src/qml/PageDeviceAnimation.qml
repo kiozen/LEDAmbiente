@@ -1,3 +1,4 @@
+
 /**********************************************************************************************
     Copyright (C) 2022 Oliver Eichler <oliver.eichler@gmx.de>
 
@@ -79,6 +80,7 @@ Page {
             id: idPowerButton
 
             enabled: deviceManager.animations.currentIndex !== -1
+            timeout_active: deviceManager.timeout.active
 
             Layout.alignment: Qt.AlignCenter
             Layout.topMargin: 10
@@ -87,6 +89,12 @@ Page {
 
             checked: deviceManager.animation.power
             onClicked: deviceManager.animation.power = checked
+
+            onTimeout: {
+                deviceManager.timeout.target = "animation"
+                deviceManager.timeout.minutes = minutes
+                deviceManager.timeout.activate = true
+            }
         }
     }
 }

@@ -94,6 +94,21 @@ public:
 };
 Q_DECLARE_METATYPE(animation_t)
 
+struct timeout_t
+{
+    Q_GADGET
+public:
+    static constexpr qint32 kNoTimeout = -1;
+    bool activate{false};
+    bool active{false};
+    qint32 minutes{kNoTimeout};
+    QString target;
+    Q_PROPERTY(bool activate MEMBER activate)
+    Q_PROPERTY(bool active MEMBER active)
+    Q_PROPERTY(qint32 minutes MEMBER minutes)
+    Q_PROPERTY(QString target MEMBER target)
+};
+Q_DECLARE_METATYPE(timeout_t)
 
 class DeviceManager : public QObject
 {
@@ -103,6 +118,7 @@ class DeviceManager : public QObject
     Q_PROPERTY(animation_t animation READ animation WRITE setAnimation NOTIFY animationChanged)
     Q_PROPERTY(alarm_t alarm READ alarm WRITE setAlarm NOTIFY alarmChanged)
     Q_PROPERTY(system_t system READ system WRITE setSystem NOTIFY systemChanged)
+    Q_PROPERTY(timeout_t timeout READ timeout WRITE setTimeout NOTIFY timeoutChanged)
 
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
 
@@ -128,6 +144,9 @@ public:
 
     system_t system() const {return system_;}
     void setSystem(const system_t& system);
+
+    timeout_t timeout() const {return timeout_;}
+    void setTimeout(const timeout_t& timeout);
 
     QString name() const {return system_.name.isEmpty() ? system_.initialName : system_.name;}
 
@@ -158,6 +177,7 @@ signals:
     void alarmChanged();
     void systemChanged();
     void nameChanged();
+    void timeoutChanged();
 
 private slots:
     void slotConnected();
@@ -184,6 +204,7 @@ private:
     animation_t animation_;
     alarm_t alarm_;
     system_t system_;
+    timeout_t timeout_;
     ModelAnimations* animations_;
     ModelColors* colors_;
 };

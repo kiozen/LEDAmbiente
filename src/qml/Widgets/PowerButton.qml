@@ -1,3 +1,4 @@
+
 /**********************************************************************************************
     Copyright (C) 2022 Oliver Eichler <oliver.eichler@gmx.de>
 
@@ -20,18 +21,65 @@ import QtQuick.Controls.Material 2.12
 import QtQuick.Controls 2.5
 
 Button {
-    id: idPowerButton
+    id: root
+
+    signal timeout(int minutes)
+
+    property bool timeout_active: false
 
     checkable: true
     icon.source: "/icons/power-sharp.png"
     icon.height: 100
     icon.width: 100
-    icon.color: idPowerButton.enabled ? checked ? "green" : Material.foreground : Material.buttonDisabledColor
+    icon.color: root.enabled ? checked ? "green" : Material.foreground : Material.buttonDisabledColor
 
     background: Rectangle {
-        border.width: idPowerButton.checked ? 2 : 1
-        border.color: idPowerButton.enabled ? idPowerButton.checked ? "green" : Material.foreground : Material.buttonDisabledColor
+        border.width: root.checked ? 2 : 1
+        border.color: root.enabled ? root.checked ? "green" : Material.foreground : Material.buttonDisabledColor
         radius: 4
         color: Material.background
+    }
+
+    Button {
+        id: idTimoutButton
+        anchors.top: root.top
+        anchors.right: root.right
+        anchors.margins: 10
+        icon.source: "/icons/time-sharp.png"
+        width: root.width / 5
+        icon.color: root.enabled ? root.timeout_active ? "#A00000" : Material.foreground : Material.buttonDisabledColor
+        onClicked: idMenu.popup()
+
+        background: Rectangle {
+            border.width: root.checked ? 2 : 1
+            border.color: root.enabled ? root.timeout_active ? "#A00000" : Material.foreground : Material.buttonDisabledColor
+            radius: 4
+            color: Material.background
+        }
+    }
+
+    Menu {
+        id: idMenu
+
+        MenuItem {
+            text: qsTr("2 minutes")
+            onClicked: root.timeout(2)
+        }
+        MenuItem {
+            text: qsTr("5 minutes")
+            onClicked: root.timeout(5)
+        }
+        MenuItem {
+            text: qsTr("10 minutes")
+            onClicked: root.timeout(10)
+        }
+        MenuItem {
+            text: qsTr("20 minutes")
+            onClicked: root.timeout(20)
+        }
+        MenuItem {
+            text: qsTr("30 minutes")
+            onClicked: root.timeout(30)
+        }
     }
 }

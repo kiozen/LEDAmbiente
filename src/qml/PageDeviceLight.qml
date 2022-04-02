@@ -114,6 +114,8 @@ Page {
         PowerButton {
             id: idButton
 
+            timeout_active: deviceManager.timeout.active
+
             Layout.alignment: Qt.AlignCenter
             Layout.topMargin: idColumnLayout.marginSize
             Layout.preferredWidth: 200
@@ -121,6 +123,12 @@ Page {
 
             checked: deviceManager.light.power
             onClicked: deviceManager.light.power = checked
+
+            onTimeout: {
+                deviceManager.timeout.target = "light"
+                deviceManager.timeout.minutes = minutes
+                deviceManager.timeout.activate = true
+            }
         }
     }
 

@@ -106,6 +106,8 @@ void DeviceManager::slotReadyRead()
         }
         else if(rsp == "get_power")
         {
+            timeout_.active = msg["timeout_active"].toBool();
+            emit timeoutChanged();
             light_.power = msg["light"].toBool();
             emit lightChanged();
             animation_.power = msg["animation"].toBool();
@@ -356,6 +358,22 @@ void DeviceManager::setSystem(const system_t& system)
 
     sendJson(msg);
     emit systemChanged();
+}
+
+void DeviceManager::setTimeout(const timeout_t& timeout)
+{
+    if(timeout.activate == true)
+    {
+        QJsonObject msg = {
+            {"cmd", "set_timeout"},
+            {"minutes", timeout.minutes},
+            {"target", timeout.target}
+        };
+        sendJson(msg);
+    }
+
+    timeout_ = timeout;
+    timeout_.activate = false;
 }
 
 void DeviceManager::setAnimation(const QString& hash)
